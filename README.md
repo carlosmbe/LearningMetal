@@ -30,7 +30,9 @@ It's part of an ongoing article series in which I explore the fundamentals neede
 
 Below are links to articles detailing each phase of the development process:
 
-1. [Swift x Metal for 3D Graphics Rendering: Setting Up in SwiftUI](https://medium.com/@carlosmbe/swift-x-metal-for-3d-graphics-rendering-part-1-setting-up-in-swiftui-d2e90d6e5ec3)  
+Bonus Article: [Running Modern OpenGL on macOS: A Virtualized Ubuntu Approach](https://medium.com/codex/running-modern-opengl-on-macos-a-virtualized-ubuntu-approach-4730c99dc611)
+
+1. [Swift x Metal for 3D Graphics Rendering Part 1: Setting Up in SwiftUI](https://medium.com/@carlosmbe/swift-x-metal-for-3d-graphics-rendering-part-1-setting-up-in-swiftui-d2e90d6e5ec3)  
 2. [Swift x Metal for 3D Graphics Rendering Part 2: Metal Shaders and Drawing A Triangle](https://medium.com/@carlosmbe/swift-x-metal-for-3d-graphics-rendering-part-2-metal-shaders-and-drawing-a-triangle-bf6803c108d4)  
 3. [Coming Soon: Part 3 and More](https://carlosmbe.medium.com)  
 
