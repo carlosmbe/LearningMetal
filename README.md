@@ -66,5 +66,6 @@ This project is available under the [MIT License](LICENSE). Feel free to use, mo
 ![1*bzEy0H7xysrc2Nuw8kyfhQ](https://github.com/user-attachments/assets/e75ed0fb-72fd-44b0-a9bf-794dae88ad93)
 
 ### By The End of Part 1
+<img width="1020" alt="Screenshot 2025-01-07 at 3 14 32 PM" src="https://github.com/user-attachments/assets/7f8f362e-f96a-46a1-925b-47940cca9364" />
 
 
