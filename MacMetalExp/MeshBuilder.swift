@@ -1,0 +1,69 @@
+//
+//  MeshBuilder.swift
+//  MacMetalExp
+//
+//  Created by Carlos Mbendera on 09/01/2025.
+//
+
+import Metal
+
+struct Mesh{
+    //Makes it easier to bundle together data
+    let vertexBuffer: MTLBuffer
+    let indexBuffer: MTLBuffer
+    let indexCount: Int
+}
+
+class MeshBuilder {
+    
+    let device: MTLDevice
+    
+    init(device: MTLDevice) {
+        self.device = device
+    }
+    
+    func makeTriangle() -> MTLBuffer {
+        
+        let vertices: [Vertex] = [
+            Vertex(position: [-0.75, -0.75, 0.0, 1.0], color: [1,1.0, 1.0]),
+            Vertex(position: [0.75, -0.75, 0.0, 1.0], color: [1.0,1.0, 1.0]),
+            Vertex(position: [0.0, 0.75, 0.0, 1.0], color: [1,0.3, 0.7])
+            ]
+        
+        return device.makeBuffer(bytes: vertices,
+                                 length: vertices.count * MemoryLayout<Vertex>.stride)!
+        
+    }
+    
+    
+    func makeQuad() -> Mesh {
+        
+        //Points in our quad
+        let vertices: [Vertex] = [
+            Vertex(position: [-0.75, -0.75, 0.0, 1.0], color: [1,1, 1]),
+            Vertex(position: [0.75, -0.75, 0.0, 1.0], color: [1,1, 1]),
+            Vertex(position: [0.75, 0.75, 0.0, 1.0], color: [1,1, 1]),
+            Vertex(position: [-0.75, 0.75, 0.0, 1.0], color: [1,1,1])
+            ]
+        
+        //Order in which we want to draw lines between points
+        let indices: [UInt16] = [ 0, 1, 2, 2, 3, 0 ]
+            
+        
+        //Making and combining the buffers for both the Vertices and indices
+        let vertexBuffer = device.makeBuffer(bytes: vertices,
+                                 length: vertices.count * MemoryLayout<Vertex>.stride)!
+        
+        let indexBuffer = device.makeBuffer(bytes: indices,
+                                            length: indices.count * MemoryLayout<UInt16>.stride)!
+        
+        
+        return Mesh(vertexBuffer: vertexBuffer,
+                    indexBuffer: indexBuffer,
+                    indexCount: indices.count)
+    }
+    
+    
+}
+
+

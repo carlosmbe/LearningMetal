@@ -13,6 +13,9 @@ class Renderer : NSObject, MTKViewDelegate {
     var device : MTLDevice!
     var commandQueue : MTLCommandQueue!
     
+    let triangle: MTLBuffer
+    let quad : Mesh
+    
     var pipeline: MTLRenderPipelineState
     
     init(_ parent : ContentView) {
@@ -26,6 +29,10 @@ class Renderer : NSObject, MTKViewDelegate {
         
         //Adding our Pipeline Builder
         pipeline = buildPipeline(device: device)
+        
+        let meshBuilder = MeshBuilder(device: device)
+        triangle = meshBuilder.makeTriangle()
+        quad = meshBuilder.makeQuad()
         
         super.init()
     }
@@ -41,7 +48,7 @@ class Renderer : NSObject, MTKViewDelegate {
         let commandBuffer = commandQueue.makeCommandBuffer()!
         let renderPassDescriptor = view.currentRenderPassDescriptor!
         //Render Pass - Clear - Set Clear Colour
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.8, green: 0.3, blue: 0.6, alpha: 1.0)
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.7, green: 0.3, blue: 0.6, alpha: 1.0)
         renderPassDescriptor.colorAttachments[0].loadAction = .clear
         renderPassDescriptor.colorAttachments[0].storeAction = .store
         
@@ -49,7 +56,14 @@ class Renderer : NSObject, MTKViewDelegate {
         
         //Updates so draw calls are made
         renderEncoder.setRenderPipelineState(pipeline)
+        
+        renderEncoder.setVertexBuffer(quad.vertexBuffer, offset: 0, index: 0)
+        renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: quad.indexCount, indexType: .uint16, indexBuffer: quad.indexBuffer, indexBufferOffset: 0)
+        
+        renderEncoder.setVertexBuffer(triangle, offset: 0, index: 0)
         renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+        
+        
         
         renderEncoder.endEncoding()
         

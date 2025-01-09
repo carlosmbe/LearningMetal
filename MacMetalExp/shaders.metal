@@ -5,6 +5,7 @@
 //  Created by Carlos Mbendera on 06/01/2025.
 //
 
+#include "bridge.h"
 #include <metal_stdlib>
 using namespace metal;
 
@@ -16,26 +17,15 @@ struct VertexOutput {
     half3 color;
 };
 
-//Hard coded data for learning purposes, don't this in real projects
-constant float4 positions[] = {
-    //X -1== Left, 1 == Right, 0 == Centre
-    float4(-0.75, -0.75, 0.0, 1.0), //Bottom Left
-    float4(0.75, -0.75, 0.0, 1.0), //Bottom Right
-    float4(0.0, 0.75, 0.0, 1.0), //Centre Top
-};
-
-constant half3 colors[] = {
-    //RGB
-    half3(1,0.0, 1.0), //Bottom Left
-    half3(0.0, 0.0, 1.0), //Bottom Right
-    half3(1.0,1.0, 1.0) //Centre Top
-};
-
-//Vertex ID is the index of the current Vertex
-VertexOutput vertex vertexMain(uint vertexID [[vertex_id]]){
+//Now we have a pointer to our Vertex Buffer as part of the Vertex Shader. Also, we qualify it as a buffer at Index 0
+VertexOutput vertex vertexMain(const device Vertex* vertices [[buffer(0)]],
+                               uint vertexID [[vertex_id]])
+{
+    //Instead of just loading the values from an array, we're now reading from the Vertex Struct we created earlier
+    Vertex v = vertices[vertexID];
     VertexOutput data;
-    data.position = positions[vertexID];
-    data.color = colors[vertexID];
+    data.position = v.position;
+    data.color = half3(v.color);
     return data;
 };
 
