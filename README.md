@@ -20,9 +20,8 @@ It's part of an ongoing article series in which I explore the fundamentals neede
 ## Setup & Requirements
 
 - **Xcode**
-- **iOS** or **macOS** deployment target (examples typically assume iOS, but it can be adapted).
+- **iOS** or **macOS Catalyst** deployment target (examples typically assume iOS, but it can be adapted).
 - **Swift 5.7** or later.
-- An Apple device or simulator that supports **Metal**.
 
 ---
 
@@ -33,8 +32,9 @@ Below are links to articles detailing each phase of the development process:
 Bonus Article: [Running Modern OpenGL on macOS: A Virtualized Ubuntu Approach](https://medium.com/codex/running-modern-opengl-on-macos-a-virtualized-ubuntu-approach-4730c99dc611)
 
 1. [Swift x Metal for 3D Graphics Rendering Part 1: Setting Up in SwiftUI](https://medium.com/@carlosmbe/swift-x-metal-for-3d-graphics-rendering-part-1-setting-up-in-swiftui-d2e90d6e5ec3)  
-2. [Swift x Metal for 3D Graphics Rendering Part 2: Metal Shaders and Drawing A Triangle](https://medium.com/@carlosmbe/swift-x-metal-for-3d-graphics-rendering-part-2-metal-shaders-and-drawing-a-triangle-bf6803c108d4)  
-3. [Coming Soon: Part 3 and More](https://carlosmbe.medium.com)  
+2. [Swift x Metal for 3D Graphics Rendering Part 2: Metal Shaders and Drawing A Triangle](https://medium.com/@carlosmbe/swift-x-metal-for-3d-graphics-rendering-part-2-metal-shaders-and-drawing-a-triangle-bf6803c108d4)
+3. [Swift x Metal for 3D Graphics Rendering Part 3: Vertex and Index Buffers](https://medium.com/@carlosmbe/swift-x-metal-for-3d-graphics-rendering-part-3-vertex-and-index-buffers-56a1d155f316)  
+4. [Coming Soon: Part 4 and More](https://carlosmbe.medium.com)  
 
 > Check back periodically or watch this repo to see when new articles are added!
 
