@@ -46,6 +46,7 @@ Bonus Article: [Running Modern OpenGL on macOS: A Virtualized Ubuntu Approach](h
 - [Kodeco’s (Ray Wenderlich) Metal Courses (Paid)](https://www.kodeco.com/1258241-3d-graphics-with-metal)  
 - [Old but FREE Kodeco Course on YouTube](https://www.youtube.com/playlist?list=PL23Revp-82LJG3vcDPm8w7b5HTKjBOY0W)  
 - [Apple’s Metal Documentation](https://developer.apple.com/metal/)
+- [Metal by Tutorials book Source Code](https://github.com/kodecocodes/met-materials) 
 
 ---
 
@@ -62,6 +63,9 @@ Bonus Article: [Running Modern OpenGL on macOS: A Virtualized Ubuntu Approach](h
 This project is available under the [MIT License](LICENSE). Feel free to use, modify, and distribute this code for your own projects.
 
 ## Beautiful Pictures (Development Screenshots)
+
+### By The End of Part 3
+<img width="932" alt="Screenshot 2025-01-12 at 4 42 51 PM" src="https://github.com/user-attachments/assets/f8b307f8-65f7-4601-8d36-4e2827621b83" />
 
 ### By The End of Part 2
 
