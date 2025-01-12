@@ -64,8 +64,11 @@ This project is available under the [MIT License](LICENSE). Feel free to use, mo
 
 ## Beautiful Pictures (Development Screenshots)
 
-### By The End of Part 3
+### By The End of Part 4
 <img width="932" alt="Screenshot 2025-01-12 at 4 42 51 PM" src="https://github.com/user-attachments/assets/f8b307f8-65f7-4601-8d36-4e2827621b83" />
+### By The End of Part 3
+<img width="1216" alt="Screenshot 2025-01-12 at 4 46 01 PM" src="https://github.com/user-attachments/assets/891b84aa-af09-4d3e-b612-aa8cd737e136" />
+
 
 ### By The End of Part 2
 
