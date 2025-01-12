@@ -15,8 +15,11 @@ class Renderer : NSObject, MTKViewDelegate {
     
     let triangle: MTLBuffer
     let quad : Mesh
+    let cube : Mesh
     
     var pipeline: MTLRenderPipelineState
+    
+    var uniforms = Uniforms()
     
     init(_ parent : ContentView) {
         self.parent = parent
@@ -33,12 +36,24 @@ class Renderer : NSObject, MTKViewDelegate {
         let meshBuilder = MeshBuilder(device: device)
         triangle = meshBuilder.makeTriangle()
         quad = meshBuilder.makeQuad()
+        cube = meshBuilder.makeCube()
+      
+        uniforms = setUpUniforms()
         
         super.init()
     }
     
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        
+          let aspect = Float(view.bounds.width) / Float(view.bounds.height)
+          let projectionMatrix =
+        createFloat4x4Projection(
+            projectionFov: Float.pi / 4,
+              near: 0.1,
+              far: 100,
+              aspect: aspect)
+          uniforms.projectionMatrix = projectionMatrix
     }
     
     ///Drawing Pass
@@ -48,22 +63,28 @@ class Renderer : NSObject, MTKViewDelegate {
         let commandBuffer = commandQueue.makeCommandBuffer()!
         let renderPassDescriptor = view.currentRenderPassDescriptor!
         //Render Pass - Clear - Set Clear Colour
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.7, green: 0.3, blue: 0.6, alpha: 1.0)
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 1.0)
         renderPassDescriptor.colorAttachments[0].loadAction = .clear
         renderPassDescriptor.colorAttachments[0].storeAction = .store
         
         let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
         
+        renderEncoder.setCullMode(.back)
+        
+        renderEncoder.setVertexBytes(&uniforms,
+                                         length: MemoryLayout<Uniforms>.stride, index: 1)
+        
         //Updates so draw calls are made
         renderEncoder.setRenderPipelineState(pipeline)
-        
-        renderEncoder.setVertexBuffer(quad.vertexBuffer, offset: 0, index: 0)
-        renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: quad.indexCount, indexType: .uint16, indexBuffer: quad.indexBuffer, indexBufferOffset: 0)
-        
-        renderEncoder.setVertexBuffer(triangle, offset: 0, index: 0)
-        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
-        
-        
+//        
+//        renderEncoder.setVertexBuffer(quad.vertexBuffer, offset: 0, index: 0)
+//        renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: quad.indexCount, indexType: .uint16, indexBuffer: quad.indexBuffer, indexBufferOffset: 0)
+//        
+//        renderEncoder.setVertexBuffer(triangle, offset: 0, index: 0)
+//        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+
+        renderEncoder.setVertexBuffer(cube.vertexBuffer, offset: 0, index: 0)
+        renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: cube.indexCount, indexType: .uint16, indexBuffer: cube.indexBuffer, indexBufferOffset: 0)
         
         renderEncoder.endEncoding()
         
@@ -73,4 +94,52 @@ class Renderer : NSObject, MTKViewDelegate {
         
     }
     
+}
+
+
+func createFloat4x4Projection(projectionFov fov: Float, near: Float, far: Float, aspect: Float) -> float4x4{
+    let y = 1 / tan(fov * 0.5)
+    let x = y / aspect
+    let z = far / (far - near)
+    let X = SIMD4<Float>( x,  0,  0,  0)
+    let Y = SIMD4<Float>( 0,  y,  0,  0)
+    let Z = SIMD4<Float>( 0,  0,  z, 1)
+    let W = SIMD4<Float>( 0,  0,  z * -near,  0)
+    return float4x4(columns: (X, Y, Z, W))
+}
+
+func setUpUniforms() -> Uniforms{
+  
+    var uniforms = Uniforms()
+    
+    let translation = float4x4(
+        SIMD4<Float>(1, 0, 0, 0),
+        SIMD4<Float>(0, 1, 0, 0),
+        SIMD4<Float>(0, 0, 1, 0),
+        SIMD4<Float>(0, 0, 0, 1)
+    )
+
+   
+    let angle = Float.pi / 6
+    let rotation = float4x4(
+        SIMD4<Float>(cos(angle), 0, sin(angle), 0),
+        SIMD4<Float>(0, 1, 0, 0),
+        SIMD4<Float>(-sin(angle), 0, cos(angle), 0),
+        SIMD4<Float>(0, 0, 0, 1)
+    )
+
+    let modelMatrix = matrix_multiply(translation, rotation)
+    let viewTranslation = float4x4(
+        SIMD4<Float>(1, 0, 0, 0),
+        SIMD4<Float>(0, 1, 0, 0),
+        SIMD4<Float>(0, 0, 1, 0),
+        SIMD4<Float>(0, 0, -2, 1)
+    )
+
+    let viewMatrix = viewTranslation.inverse
+    
+    uniforms.modelMatrix = modelMatrix
+    uniforms.viewMatrix = viewMatrix
+
+    return uniforms
 }

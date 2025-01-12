@@ -19,12 +19,19 @@ struct VertexOutput {
 
 //Now we have a pointer to our Vertex Buffer as part of the Vertex Shader. Also, we qualify it as a buffer at Index 0
 VertexOutput vertex vertexMain(const device Vertex* vertices [[buffer(0)]],
-                               uint vertexID [[vertex_id]])
+                               uint vertexID [[vertex_id]],
+                               constant Uniforms &uniforms [[buffer(1)]])
 {
     //Instead of just loading the values from an array, we're now reading from the Vertex Struct we created earlier
     Vertex v = vertices[vertexID];
     VertexOutput data;
-    data.position = v.position;
+    
+    float4 position = uniforms.projectionMatrix * uniforms.viewMatrix
+     * uniforms.modelMatrix * v.position;
+    
+   data.position = position;
+    
+   // data.position = v.position;
     data.color = half3(v.color);
     return data;
 };
