@@ -19,9 +19,18 @@ It's part of an ongoing article series in which I explore the fundamentals neede
 
 ## Setup & Requirements
 
+  ### Requirements
+
 - **Xcode**
-- **iOS** or **macOS Catalyst** deployment target (examples typically assume iOS, but it can be adapted).
+- **iOS** or **macOS Catalyst** deployment target (my code assumes macOS Catalyst, but it can be adapted).
 - **Swift 5.7** or later.
+
+  ### Set Up
+-  Clone the repository
+-  Open project in XCode
+-  Change the Development Team
+-  Clean your build folder
+-  Build and run the app
 
 ---
 
