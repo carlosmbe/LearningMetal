@@ -88,4 +88,46 @@ class MeshBuilder {
         return Mesh(vertexBuffer: vb, indexBuffer: ib, indexCount: indices.count)
     }
     
+    /// Loads a model file  from the app bundle and creates a Mesh
+    func loadObj(from url: URL) -> Mesh? {
+        do {
+            let content = try String(contentsOf: url)
+            var vertices: [Vertex] = []
+            var indices: [UInt16] = []
+            var positions: [SIMD3<Float>] = []
+            
+            for line in content.split(separator: "\n") {
+                let components = line.split(separator: " ")
+                guard let keyword = components.first else { continue }
+                
+                switch keyword {
+                case "v": // Vertex position
+                    if components.count >= 4 {
+                        let x = Float(components[1]) ?? 0
+                        let y = Float(components[2]) ?? 0
+                        let z = Float(components[3]) ?? 0
+                        positions.append(SIMD3<Float>(x, y, z))
+                    }
+                case "f": // Face indices
+                    for i in 1..<components.count {
+                        if let index = Int(components[i].split(separator: "/").first ?? ""),
+                           index > 0 {
+                            indices.append(UInt16(index - 1)) // OBJ indices are 1-based
+                        }
+                    }
+                default:
+                    continue
+                }
+            }
+            
+            vertices = positions.map { Vertex(position: SIMD4<Float>($0, 1.0), color: SIMD3<Float>(1, 1, 1)) }
+            let vertexBuffer = device.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<Vertex>.stride, options: [])!
+            let indexBuffer = device.makeBuffer(bytes: indices, length: indices.count * MemoryLayout<UInt16>.stride, options: [])!
+            
+            return Mesh(vertexBuffer: vertexBuffer, indexBuffer: indexBuffer, indexCount: indices.count)
+        } catch {
+            print("Failed to load OBJ file: \(error)")
+            return nil
+        }
+    }
 }

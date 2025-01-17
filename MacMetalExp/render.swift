@@ -13,9 +13,7 @@ class Renderer : NSObject, MTKViewDelegate {
     var device : MTLDevice!
     var commandQueue : MTLCommandQueue!
     
-    let triangle: MTLBuffer
-    let quad : Mesh
-    let cube : Mesh
+    let objMesh : Mesh
     
     var pipeline: MTLRenderPipelineState
     
@@ -34,9 +32,7 @@ class Renderer : NSObject, MTKViewDelegate {
         pipeline = buildPipeline(device: device)
         
         let meshBuilder = MeshBuilder(device: device)
-        triangle = meshBuilder.makeTriangle()
-        quad = meshBuilder.makeQuad()
-        cube = meshBuilder.makeCube()
+        objMesh = meshBuilder.loadObj(from: Bundle.main.url(forResource: "XXX Whatever Model I Decide To Publish The Article With XXX", withExtension: "obj")!)!
       
         uniforms = setUpUniforms()
         
@@ -76,15 +72,9 @@ class Renderer : NSObject, MTKViewDelegate {
         
         //Updates so draw calls are made
         renderEncoder.setRenderPipelineState(pipeline)
-//        
-//        renderEncoder.setVertexBuffer(quad.vertexBuffer, offset: 0, index: 0)
-//        renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: quad.indexCount, indexType: .uint16, indexBuffer: quad.indexBuffer, indexBufferOffset: 0)
-//        
-//        renderEncoder.setVertexBuffer(triangle, offset: 0, index: 0)
-//        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
 
-        renderEncoder.setVertexBuffer(cube.vertexBuffer, offset: 0, index: 0)
-        renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: cube.indexCount, indexType: .uint16, indexBuffer: cube.indexBuffer, indexBufferOffset: 0)
+        renderEncoder.setVertexBuffer(objMesh.vertexBuffer, offset: 0, index: 0)
+        renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: objMesh.indexCount, indexType: .uint16, indexBuffer: objMesh.indexBuffer, indexBufferOffset: 0)
         
         renderEncoder.endEncoding()
         
@@ -133,7 +123,7 @@ func setUpUniforms() -> Uniforms{
         SIMD4<Float>(1, 0, 0, 0),
         SIMD4<Float>(0, 1, 0, 0),
         SIMD4<Float>(0, 0, 1, 0),
-        SIMD4<Float>(0, 0, -2, 1)
+        SIMD4<Float>(0, 0, -4, 1)
     )
 
     let viewMatrix = viewTranslation.inverse
