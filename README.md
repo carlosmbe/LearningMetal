@@ -8,30 +8,13 @@ It's part of an ongoing article series in which I explore the fundamentals neede
 ---
 
 ## Table of Contents
-
-1. [Setup & Requirements](#setup--requirements)  
-2. [Articles in This Series](#articles-in-this-series)  
-3. [Useful Resources](#useful-resources)  
+ 
+1. [Articles in This Series](#articles-in-this-series)  
+2. [Useful Resources](#useful-resources)
+3. [Setup & Requirements](#setup--requirements)  
 4. [Feedback & Contributions](#feedback--contributions)  
 5. [License](#license)  
 6. [Beautiful Pictures (Development Screenshots)](#Beautiful--Pictures--(Development--Screenshots))   
----
-
-## Setup & Requirements
-
-  ### Requirements
-
-- **Xcode**
-- **iOS** or **macOS Catalyst** deployment target (my code assumes macOS Catalyst, but it can be adapted).
-- **Swift 5.7** or later.
-
-  ### Set Up
--  Clone the repository
--  Open project in XCode
--  Change the Development Team
--  Clean your build folder
--  Build and run the app
-
 ---
 
 ## Articles in This Series
@@ -58,6 +41,23 @@ Bonus Article: [Running Modern OpenGL on macOS: A Virtualized Ubuntu Approach](h
 - [Old but FREE Kodeco Course on YouTube](https://www.youtube.com/playlist?list=PL23Revp-82LJG3vcDPm8w7b5HTKjBOY0W)  
 - [Apple’s Metal Documentation](https://developer.apple.com/metal/)
 - [Metal by Tutorials book Source Code](https://github.com/kodecocodes/met-materials) 
+
+---
+
+## Setup & Requirements
+
+  ### Requirements
+
+- **Xcode**
+- **iOS** or **macOS Catalyst** deployment target (my code assumes macOS Catalyst, but it can be adapted).
+- **Swift 5.7** or later.
+
+  ### Set Up
+-  Clone the repository
+-  Open project in XCode
+-  Change the Development Team
+-  Clean your build folder
+-  Build and run the app
 
 ---
 
