@@ -75,6 +75,12 @@ This project is available under the [MIT License](LICENSE). Feel free to use, mo
 
 ## Beautiful Pictures (Development Screenshots)
 
+### Current State of Repo
+WIP
+
+### By The End of Part 5
+<img width="932" alt="Screenshot 2025-01-27 at 2 07 35 PM" src="https://github.com/user-attachments/assets/f5e82707-2b9d-46e6-88b0-025bbaa7ca2b" />
+
 ### By The End of Part 4
 <img width="932" alt="Screenshot 2025-01-12 at 4 42 51 PM" src="https://github.com/user-attachments/assets/f8b307f8-65f7-4601-8d36-4e2827621b83" />
 
