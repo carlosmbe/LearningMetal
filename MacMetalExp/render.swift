@@ -23,6 +23,8 @@ class Renderer : NSObject, MTKViewDelegate {
     let mdlMesh : MDLMesh
     let mesh : MTKMesh
     
+    var timer: Float = 0
+    
     init(_ parent : ContentView) {
         self.parent = parent
         
@@ -72,11 +74,49 @@ class Renderer : NSObject, MTKViewDelegate {
         let commandBuffer = commandQueue.makeCommandBuffer()!
         let renderPassDescriptor = view.currentRenderPassDescriptor!
         //Render Pass - Set Clear Colour - Basically Background
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 1.0)
+        //renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 1.0)
+        
+        // Start: THIS NOT FOR SHIPPING CODE. IT'S JUST ME HAVING DEBUG CODE THAT Changes the background
+        timer += 0.005
+         // Changes  background color using the timer
+         let red = (sin(timer) + 1) / 2  // Maps sin(timer) from [-1, 1] to [0, 1]
+         let green = (cos(timer) + 1) / 2
+         let blue = (sin(timer * 0.5) + 1) / 2
+         
+         renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(
+            red: Double(red),
+            green: Double(green),
+            blue: Double(blue),
+            alpha: 1.0
+         )
+        //End: THIS NOT FOR SHIPPING CODE. IT'S JUST ME HAVING DEBUG CODE THAT Changes the background
+        
         renderPassDescriptor.colorAttachments[0].loadAction = .clear
         renderPassDescriptor.colorAttachments[0].storeAction = .store
         
         let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
+        
+        //Start : THIS NOT FOR SHIPPING CODE. IT'S JUST ME HAVING DEBUG CODE THAT ROTATES MODELS
+      //  timer += 0.005
+        
+        let rotation = float4x4(
+            SIMD4<Float>(cos(timer), 0, sin(timer), 0),
+            SIMD4<Float>(0, 1, 0, 0),
+            SIMD4<Float>(-sin(timer), 0, cos(timer), 0),
+            SIMD4<Float>(0, 0, 0, 1)
+        )
+
+        let translation = float4x4(
+            SIMD4<Float>(1, 0, 0, 0),
+            SIMD4<Float>(0, 1, 0, 0),
+            SIMD4<Float>(0, 0, 1, 0),
+            SIMD4<Float>(0, 0, 0, 1)
+        )
+
+        // Combine translation and rotation to create the modelMatrix
+        uniforms.modelMatrix = matrix_multiply(translation, rotation)
+        
+        //End: THIS NOT FOR SHIPPING CODE. IT'S JUST ME HAVING DEBUG CODE THAT ROTATES MODELS
         
         renderEncoder.setCullMode(.back)
        

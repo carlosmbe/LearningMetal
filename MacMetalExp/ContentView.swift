@@ -21,12 +21,17 @@ struct ContentView: UIViewRepresentable {
         let mtkView = MTKView()
         mtkView.delegate = context.coordinator
         mtkView.preferredFramesPerSecond = 60
-        mtkView.enableSetNeedsDisplay = true
+       // mtkView.enableSetNeedsDisplay = true
         
         
         if let metalDevice = MTLCreateSystemDefaultDevice() {
             mtkView.device = metalDevice
         }
+        
+        //Needed to draw every frame for the rotations
+        mtkView.isPaused = false
+        mtkView.enableSetNeedsDisplay = false
+        // End comment for rotation draw changes
         
         mtkView.framebufferOnly = false
         mtkView.drawableSize = mtkView.frame.size
