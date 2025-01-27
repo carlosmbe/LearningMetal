@@ -13,15 +13,19 @@ class Renderer : NSObject, MTKViewDelegate {
     var device : MTLDevice!
     var commandQueue : MTLCommandQueue!
     
-    let objMesh : Mesh
-    
     var pipeline: MTLRenderPipelineState
     
     var uniforms = Uniforms()
     
+    //New Properties
+    let allocator : MTKMeshBufferAllocator
+    let asset : MDLAsset
+    let mdlMesh : MDLMesh
+    let mesh : MTKMesh
+    
     init(_ parent : ContentView) {
         self.parent = parent
-       
+        
         if let device = MTLCreateSystemDefaultDevice() {
             self.device = device
         }
@@ -31,10 +35,19 @@ class Renderer : NSObject, MTKViewDelegate {
         //Adding our Pipeline Builder
         pipeline = buildPipeline(device: device)
         
-        let meshBuilder = MeshBuilder(device: device)
-        objMesh = meshBuilder.loadObj(from: Bundle.main.url(forResource: "XXX Whatever Model I Decide To Publish The Article With XXX", withExtension: "obj")!)!
-      
         uniforms = setUpUniforms()
+        
+        //New logic that intitalises our new properties
+        allocator = MTKMeshBufferAllocator(device: device)
+        
+        //Copyright of Cat Model Belongs to @printable_models from free3d.com https://free3d.com/3d-model/cat-v1--522281.html
+        asset = MDLAsset(url: Bundle.main.url(forResource: "12221_Cat_v1_l3", withExtension: "obj")!,
+                         vertexDescriptor: .defaultLayout,
+                         bufferAllocator: allocator)
+        
+        mdlMesh = asset.childObjects(of: MDLMesh.self).first as! MDLMesh
+        
+        mesh = try! MTKMesh(mesh: mdlMesh, device: device)
         
         super.init()
     }
@@ -58,7 +71,7 @@ class Renderer : NSObject, MTKViewDelegate {
         
         let commandBuffer = commandQueue.makeCommandBuffer()!
         let renderPassDescriptor = view.currentRenderPassDescriptor!
-        //Render Pass - Clear - Set Clear Colour
+        //Render Pass - Set Clear Colour - Basically Background
         renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 1.0)
         renderPassDescriptor.colorAttachments[0].loadAction = .clear
         renderPassDescriptor.colorAttachments[0].storeAction = .store
@@ -66,16 +79,28 @@ class Renderer : NSObject, MTKViewDelegate {
         let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
         
         renderEncoder.setCullMode(.back)
-        
+       
         renderEncoder.setVertexBytes(&uniforms,
-                                         length: MemoryLayout<Uniforms>.stride, index: 1)
+                                         length: MemoryLayout<Uniforms>.stride, index: 2)
         
-        //Updates so draw calls are made
+        
         renderEncoder.setRenderPipelineState(pipeline)
 
-        renderEncoder.setVertexBuffer(objMesh.vertexBuffer, offset: 0, index: 0)
-        renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: objMesh.indexCount, indexType: .uint16, indexBuffer: objMesh.indexBuffer, indexBufferOffset: 0)
+        //Draw our new Mesh from the Asset
+        renderEncoder.setVertexBuffer(
+          mesh.vertexBuffers[0].buffer,
+          offset: 0,
+          index: 0)
         
+        for submesh in mesh.submeshes {
+          renderEncoder.drawIndexedPrimitives(
+                                  type: .triangle,
+                                  indexCount: submesh.indexCount,
+                                  indexType: submesh.indexType,
+                                  indexBuffer: submesh.indexBuffer.buffer,
+                                  indexBufferOffset: submesh.indexBuffer.offset
+          )
+        }
         renderEncoder.endEncoding()
         
         //Commit and present the state of the buffer
@@ -132,4 +157,27 @@ func setUpUniforms() -> Uniforms{
     uniforms.viewMatrix = viewMatrix
 
     return uniforms
+}
+
+
+
+extension MTLVertexDescriptor {
+  static var defaultLayout: MTLVertexDescriptor? {
+    MTKMetalVertexDescriptorFromModelIO(.defaultLayout)
+  }
+}
+
+extension MDLVertexDescriptor {
+  static var defaultLayout: MDLVertexDescriptor {
+    let vertexDescriptor = MDLVertexDescriptor()
+    var offset = 0
+    vertexDescriptor.attributes[0] = MDLVertexAttribute(
+      name: MDLVertexAttributePosition,
+      format: .float3,
+      offset: 0,
+      bufferIndex: 0)
+    offset += MemoryLayout<float3>.stride
+    vertexDescriptor.layouts[0] = MDLVertexBufferLayout(stride: offset)
+    return vertexDescriptor
+  }
 }

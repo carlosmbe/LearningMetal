@@ -14,6 +14,15 @@ struct Vertex{
     vector_float3 color;
 };
 
+struct VertexIn {
+    vector_float4  position [[attribute(0)]];
+};
+
+struct VertexOut {
+    vector_float4  position [[position]];
+};
+
+
 struct Uniforms{
   matrix_float4x4 modelMatrix;
   matrix_float4x4 viewMatrix;
