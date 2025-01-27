@@ -44,7 +44,8 @@ Bonus Article: [Running Modern OpenGL on macOS: A Virtualized Ubuntu Approach](h
 2. [Swift x Metal for 3D Graphics Rendering Part 2: Metal Shaders and Drawing A Triangle](https://medium.com/@carlosmbe/swift-x-metal-for-3d-graphics-rendering-part-2-metal-shaders-and-drawing-a-triangle-bf6803c108d4)
 3. [Swift x Metal for 3D Graphics Rendering Part 3: Vertex and Index Buffers](https://medium.com/@carlosmbe/swift-x-metal-for-3d-graphics-rendering-part-3-vertex-and-index-buffers-56a1d155f316)
 4. [Swift x Metal for 3D Graphics Rendering Part 4: Drawing 3D Shapes And The Matrix](https://medium.com/@carlosmbe/swift-x-metal-for-3d-graphics-rendering-part-4-drawing-3d-shapes-and-the-matrix-598db38c86c0)
-5. [Coming Soon: Part 5 and More](https://carlosmbe.medium.com)  
+5. [Swift x Metal for 3D Graphics Rendering Part 5: Drawing 3D Models From Files](https://medium.com/@carlosmbe/swift-x-metal-for-3d-graphics-rendering-part-5-drawing-3d-models-from-files-27c9cfd288c2)
+6. [Coming One of These Days: Part 6 and More](https://carlosmbe.medium.com)  
 
 > Check back periodically or watch this repo to see when new articles are added!
 
