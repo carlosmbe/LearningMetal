@@ -8,148 +8,128 @@
 import MetalKit
 
 ///Put metal code here
-class Renderer : NSObject, MTKViewDelegate {
-    var parent : ContentView
-    var device : MTLDevice!
-    var commandQueue : MTLCommandQueue!
+import MetalKit
+import ModelIO
+
+class Renderer: NSObject {
+    // Metal objects.
+    var device: MTLDevice!
+    var commandQueue: MTLCommandQueue!
+    var pipeline: MTLRenderPipelineState!
     
-    var pipeline: MTLRenderPipelineState
-    
+    // Uniforms (you already have this defined)
     var uniforms = Uniforms()
     
-    //New Properties
-    let allocator : MTKMeshBufferAllocator
-    let asset : MDLAsset
-    let mdlMesh : MDLMesh
-    let mesh : MTKMesh
+    // Mesh properties.
+    let allocator: MTKMeshBufferAllocator
+    let asset: MDLAsset
+    let mdlMesh: MDLMesh
+    let mesh: MTKMesh
     
+    // Animation timer.
     var timer: Float = 0
     
-    init(_ parent : ContentView) {
-        self.parent = parent
+    // Initializer now simply receives a device.
+    init(device: MTLDevice) {
+        self.device = device
+        self.commandQueue = device.makeCommandQueue()!
         
-        if let device = MTLCreateSystemDefaultDevice() {
-            self.device = device
-        }
-        
-        self.commandQueue = device.makeCommandQueue()
-        
-        //Adding our Pipeline Builder
-        pipeline = buildPipeline(device: device)
-        
-        uniforms = setUpUniforms()
-        
-        //New logic that intitalises our new properties
+        // Set up mesh-related properties.
         allocator = MTKMeshBufferAllocator(device: device)
-        
-        //Copyright of Cat Model Belongs to @printable_models from free3d.com https://free3d.com/3d-model/cat-v1--522281.html
-        asset = MDLAsset(url: Bundle.main.url(forResource: "12221_Cat_v1_l3", withExtension: "obj")!,
+        // Update the URL/resource name as needed.
+        let url = Bundle.main.url(forResource: "12221_Cat_v1_l3", withExtension: "obj")!
+        asset = MDLAsset(url: url,
                          vertexDescriptor: .defaultLayout,
                          bufferAllocator: allocator)
-        
         mdlMesh = asset.childObjects(of: MDLMesh.self).first as! MDLMesh
-        
         mesh = try! MTKMesh(mesh: mdlMesh, device: device)
         
         super.init()
+        
+        // Set up initial uniforms.
+        uniforms = setUpUniforms()
     }
     
-    
-    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        
-          let aspect = Float(view.bounds.width) / Float(view.bounds.height)
-          let projectionMatrix =
-        createFloat4x4Projection(
-            projectionFov: Float.pi / 4,
-              near: 0.1,
-              far: 100,
-              aspect: aspect)
-          uniforms.projectionMatrix = projectionMatrix
+    // Set up your pipeline (move pipeline creation code from your init).
+    func setUpPipeline() {
+        pipeline = buildPipeline(device: device)
     }
     
-    ///Drawing Pass
-    func draw(in view: MTKView) {
-        guard let drawable = view.currentDrawable else {    return  }
+    // New render function that accepts a CAMetalLayer.
+    func render(to metalLayer: CAMetalLayer) {
+        guard let drawable = metalLayer.nextDrawable() else { return }
         
-        let commandBuffer = commandQueue.makeCommandBuffer()!
-        let renderPassDescriptor = view.currentRenderPassDescriptor!
-        //Render Pass - Set Clear Colour - Basically Background
-        //renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 1.0)
+        // Create a command buffer.
+        guard let commandBuffer = commandQueue.makeCommandBuffer() else { return }
         
-        // Start: THIS NOT FOR SHIPPING CODE. IT'S JUST ME HAVING DEBUG CODE THAT Changes the background
+        // Create a render pass descriptor manually.
+        let renderPassDescriptor = MTLRenderPassDescriptor()
+        renderPassDescriptor.colorAttachments[0].texture = drawable.texture
+        
+        // (Optional) Animate your background color.
         timer += 0.005
-         // Changes  background color using the timer
-         let red = (sin(timer) + 1) / 2  // Maps sin(timer) from [-1, 1] to [0, 1]
-         let green = (cos(timer) + 1) / 2
-         let blue = (sin(timer * 0.5) + 1) / 2
-         
-         renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(
+        let red = (sin(timer) + 1) / 2
+        let green = (cos(timer) + 1) / 2
+        let blue = (sin(timer * 0.5) + 1) / 2
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(
             red: Double(red),
             green: Double(green),
             blue: Double(blue),
             alpha: 1.0
-         )
-        //End: THIS NOT FOR SHIPPING CODE. IT'S JUST ME HAVING DEBUG CODE THAT Changes the background
-        
+        )
         renderPassDescriptor.colorAttachments[0].loadAction = .clear
         renderPassDescriptor.colorAttachments[0].storeAction = .store
         
-        let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
+        // Create a render command encoder.
+        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else { return }
         
-        //Start : THIS NOT FOR SHIPPING CODE. IT'S JUST ME HAVING DEBUG CODE THAT ROTATES MODELS
-      //  timer += 0.005
-        
+        // Update model transformation (for rotation, etc.).
         let rotation = float4x4(
             SIMD4<Float>(cos(timer), 0, sin(timer), 0),
             SIMD4<Float>(0, 1, 0, 0),
             SIMD4<Float>(-sin(timer), 0, cos(timer), 0),
             SIMD4<Float>(0, 0, 0, 1)
         )
-
+        // Here we’re just using an identity translation.
         let translation = float4x4(
             SIMD4<Float>(1, 0, 0, 0),
             SIMD4<Float>(0, 1, 0, 0),
             SIMD4<Float>(0, 0, 1, 0),
             SIMD4<Float>(0, 0, 0, 1)
         )
-
-        // Combine translation and rotation to create the modelMatrix
         uniforms.modelMatrix = matrix_multiply(translation, rotation)
         
-        //End: THIS NOT FOR SHIPPING CODE. IT'S JUST ME HAVING DEBUG CODE THAT ROTATES MODELS
-        
+        // Set up render state.
         renderEncoder.setCullMode(.back)
-       
         renderEncoder.setVertexBytes(&uniforms,
-                                         length: MemoryLayout<Uniforms>.stride, index: 2)
-        
-        
+                                     length: MemoryLayout<Uniforms>.stride,
+                                     index: 2)
         renderEncoder.setRenderPipelineState(pipeline)
-
-        //Draw our new Mesh from the Asset
-        renderEncoder.setVertexBuffer(
-          mesh.vertexBuffers[0].buffer,
-          offset: 0,
-          index: 0)
         
+        // Set vertex buffer for the mesh.
+        renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer,
+                                      offset: 0,
+                                      index: 0)
+        
+        // Draw each submesh.
         for submesh in mesh.submeshes {
-          renderEncoder.drawIndexedPrimitives(
-                                  type: .triangle,
-                                  indexCount: submesh.indexCount,
-                                  indexType: submesh.indexType,
-                                  indexBuffer: submesh.indexBuffer.buffer,
-                                  indexBufferOffset: submesh.indexBuffer.offset
-          )
+            renderEncoder.drawIndexedPrimitives(
+                type: .triangle,
+                indexCount: submesh.indexCount,
+                indexType: submesh.indexType,
+                indexBuffer: submesh.indexBuffer.buffer,
+                indexBufferOffset: submesh.indexBuffer.offset
+            )
         }
+        
         renderEncoder.endEncoding()
         
-        //Commit and present the state of the buffer
+        // Present the drawable and commit the command buffer.
         commandBuffer.present(drawable)
         commandBuffer.commit()
-        
     }
-    
 }
+
 
 
 func createFloat4x4Projection(projectionFov fov: Float, near: Float, far: Float, aspect: Float) -> float4x4{
