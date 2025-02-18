@@ -5,6 +5,14 @@ It's part of an ongoing article series in which I explore the fundamentals neede
 
 > **Author’s Note:** If I've made any errors, or you have a really cool way of implementing something, feel free to open an issue or leave a comment!
 
+> Cool Thing 1 **Note For Vision OS Development** The Engineerers at Apple HQ have left some really solid starter projects in XCode that set up the Rendering Code quite nicely.
+> 
+> You can access it by creating a new VisionOS project:
+>
+> File >> New Project >> visionOS >> App >> Window,Metal,Full (or Mixed)
+> 
+> Then again, if you're new to 3D Graphics and want to truly understand what's going on, it may be too much information and the Swift syntax used is on the advanced side.
+
 ---
 
 ## Table of Contents
