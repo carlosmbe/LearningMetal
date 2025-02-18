@@ -6,9 +6,6 @@
 //
 
 import MetalKit
-
-///Put metal code here
-import MetalKit
 import ModelIO
 
 class Renderer: NSObject {
@@ -68,14 +65,12 @@ class Renderer: NSObject {
         
         // (Optional) Animate your background color.
         timer += 0.005
-        let red = (sin(timer) + 1) / 2
-        let green = (cos(timer) + 1) / 2
-        let blue = (sin(timer * 0.5) + 1) / 2
+       
         renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(
-            red: Double(red),
-            green: Double(green),
-            blue: Double(blue),
-            alpha: 1.0
+            red: Double(0),
+            green: Double(0),
+            blue: Double(0),
+            alpha: 0
         )
         renderPassDescriptor.colorAttachments[0].loadAction = .clear
         renderPassDescriptor.colorAttachments[0].storeAction = .store

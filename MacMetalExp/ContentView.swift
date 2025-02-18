@@ -85,6 +85,7 @@ class MetalView: UIView {
         metalLayer.device = device
         metalLayer.pixelFormat = .bgra8Unorm
         metalLayer.framebufferOnly = true
+        metalLayer.isOpaque = false
         
         // Initialize your renderer.
         renderer = Renderer(device: device)
